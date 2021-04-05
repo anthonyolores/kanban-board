@@ -1,8 +1,10 @@
-export type Item = {
+export type ItemData = {
+    id: string;
     name: string;
 };
 
-export type Column = {
+export type ColumnData = {
+    id: string;
     name: string;
-    items: Item[];
+    description: string;
 }

@@ -1,48 +1,97 @@
 import { useState } from 'react';
-import { Column } from './type';
+import { ColumnData } from './type';
+import Column from './Column';
 import * as React from 'react';
 import styled from 'styled-components';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
 
-const ColumnContainer = styled.div({
+const BoardContainer = styled.div({
 	display: 'flex',
-	'flex-direction': 'row',
-	width: '300px',
-	'background-color': '#ccc',
-});
-
-const ColumnRow = styled.div({
-	display: 'flex',
-	'flex-direction': 'column',
+	flexDirection: 'row',
+	overflowX: 'auto',
+	width: '100%',
+	padding: '25px',
+	backgroundColor: '#eee',
 });
 
 const Board: React.FC = () => {
-	const [columns, setColumns] = useState<Column[]>([
-		{
-			name: 'Column 1',
-			items: [{ name: 'Item 1' }],
-		},
-		{
-			name: 'Column 2',
-			items: [{ name: 'Item 1' }, { name: 'Item 2' }],
-		},
+	const [columns, setColumns] = useState<Array<ColumnData[]>>([
+		[
+			{
+				id: '11',
+				name: 'Column 1',
+				description: 'Description Item 1',
+			},
+		],
+		[
+			{
+				id: '22',
+				name: 'Column 2',
+				description: 'Description Item 2',
+			},
+		],
+		[
+			{
+				id: '33',
+				name: 'Column 3',
+				description: 'Description Item 3',
+			},
+		],
 	]);
+
+	function handleDropColumnItem(
+		colId: string,
+		sourceContainerId: number,
+		destContainerId: number
+	) {
+		const sourceItemIndex = columns[sourceContainerId].findIndex(
+			(c) => c.id === colId
+		);
+
+		if (sourceItemIndex !== -1) {
+			const next = [...columns];
+
+			//add item to destination column
+			next[destContainerId].push(
+				columns[sourceContainerId].find((c) => c.id === colId)
+			);
+
+			//remove item from source column
+			next[sourceContainerId].splice(sourceItemIndex, 1);
+
+			setColumns(next);
+		}
+	}
+
+	function handleDropColumnContainer(
+		sourceContainerId: number,
+		destContainerId: number
+	) {
+		const next = [...columns];
+		const hold = columns[sourceContainerId];
+		next[sourceContainerId] = columns[destContainerId];
+		next[destContainerId] = hold;
+
+		setColumns(next);
+	}
 
 	return (
 		<div>
-			<div>Kanban Board</div>
-			<ColumnContainer>
-				{columns.map((column) => {
-					return (
-						<ColumnRow>
-							<div>{column.name}</div>
-							{column.items.map((item) => {
-								return <ColumnRow>{item.name}</ColumnRow>;
-							})}
-							<div>Add Item</div>
-						</ColumnRow>
-					);
-				})}
-			</ColumnContainer>
+			<DndProvider backend={HTML5Backend}>
+				<BoardContainer>
+					{columns.map((column, i) => {
+						return (
+							<Column
+								containerId={i}
+								dropColumn={handleDropColumnItem}
+								dropColumnContainer={handleDropColumnContainer}
+								key={'column-' + i}
+								columns={column}></Column>
+						);
+					})}
+				</BoardContainer>
+			</DndProvider>
 		</div>
 	);
 };
