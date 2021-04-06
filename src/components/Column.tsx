@@ -1,9 +1,10 @@
-import React = require('react');
+import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
 import { ColumnData } from './type';
 import ColumnHeader from './ColumnHeader';
 import ColumnButton from './ColumnButton';
-import { useDrag, useDrop } from 'react-dnd';
+import { useDrag, useDragLayer, useDrop } from 'react-dnd';
+
 const ColumnContainerStyled = styled.div.attrs((props: any) => ({
 	backgroundColor: props.className ? '#eee' : '#000',
 }))({
@@ -30,6 +31,7 @@ const ColumnContent: React.FC<ColumnContentProps> = ({
 		item: {
 			id: column.id,
 			containerId,
+			column,
 		},
 		options: { dropEffect: 'move' },
 		collect: (monitor) => {
@@ -51,16 +53,98 @@ const ColumnContent: React.FC<ColumnContentProps> = ({
 
 export type ColumnContainerProps = {
 	containerId: number;
-	dropColumn: (
+	dropColumn?: (
 		colId: string,
 		sourceContainerId: number,
 		destContainerId: number
 	) => void;
-	dropColumnContainer: (
+	dropColumnContainer?: (
 		sourceContainerId: number,
 		destContainerId: number
 	) => void;
 	columns: ColumnData[];
+};
+
+const layerStyles: CSSProperties = {
+	position: 'fixed',
+	pointerEvents: 'none',
+	zIndex: 100,
+	left: 0,
+	top: 0,
+	width: '100%',
+	height: '100%',
+};
+
+function getItemStyles(props) {
+	const { currentOffset } = props;
+	if (!currentOffset) {
+		return {
+			display: 'none',
+		};
+	}
+
+	const { x, y } = currentOffset;
+	const transform = `translate(${x}px, ${y}px)`;
+	return {
+		transform: transform,
+		WebkitTransform: transform,
+	};
+}
+
+const ColumnContainerDragLayer: React.FC = ({ children }) => {
+	const {
+		itemType,
+		isDragging,
+		item,
+		initialOffset,
+		currentOffset,
+	} = useDragLayer((monitor) => ({
+		item: monitor.getItem(),
+		itemType: monitor.getItemType(),
+		initialOffset: monitor.getInitialSourceClientOffset(),
+		currentOffset: monitor.getSourceClientOffset(),
+		isDragging: monitor.isDragging(),
+	}));
+
+	return (
+		<div>
+			{isDragging ? (
+				itemType === 'ColumnContainer' ? (
+					<div style={layerStyles}>
+						<div
+							style={getItemStyles({
+								itemType,
+								isDragging,
+								item,
+								initialOffset,
+								currentOffset,
+							})}>
+							{<ThumbnailDrag containerId={item.id} columns={item.columns} />}
+						</div>
+					</div>
+				) : itemType === 'Column' ? (
+					<div style={layerStyles}>
+						<div
+							style={getItemStyles({
+								itemType,
+								isDragging,
+								item,
+								initialOffset,
+								currentOffset,
+							})}>
+							{
+								<ColumnContent
+									containerId={item.containerId}
+									column={item.column}
+								/>
+							}
+						</div>
+					</div>
+				) : null
+			) : null}
+			{children}
+		</div>
+	);
 };
 
 const ColumnContainer: React.FC<ColumnContainerProps> = ({
@@ -75,9 +159,6 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 		drop: (item: { id: string; containerId: number }) => {
 			dropColumn(item.id, item.containerId, containerId);
 		},
-		collect: (monitor) => ({
-			isOver: !!monitor.isOver(),
-		}),
 	});
 
 	// drag column container
@@ -85,6 +166,7 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 		type: 'ColumnContainer',
 		item: {
 			id: containerId,
+			columns,
 		},
 		options: { dropEffect: 'move' },
 		collect: (monitor) => {
@@ -105,27 +187,61 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 		}),
 	});
 
-	const customStyle = isDraggingContainer ? { opacity: '0.2' } : {};
+	const customStyle = isDraggingContainer ? { opacity: '0' } : {};
 
 	return (
+		<ColumnContainerDragLayer>
+			<div
+				ref={dropRefContainer}
+				style={{
+					backgroundColor: isOverContainer ? 'blue' : 'white',
+					padding: '15px',
+				}}>
+				<div
+					ref={dragRefContainer}
+					style={{
+						...customStyle,
+						padding: '15px',
+						backgroundColor: 'red',
+						cursor: 'drag',
+						opacity: isOverContainer ? '0' : '1',
+					}}>
+					<ColumnContainerStyled
+						ref={dropRef}
+						style={{
+							backgroundColor: isOver ? 'blue' : 'white',
+						}}>
+						{columns.map((col, i) => {
+							return (
+								<ColumnContent
+									containerId={containerId}
+									column={col}
+									key={i + col.name}
+								/>
+							);
+						})}
+						<ColumnButton name={'Add Item'} />
+					</ColumnContainerStyled>
+				</div>
+			</div>
+		</ColumnContainerDragLayer>
+	);
+};
+
+const ThumbnailDrag: React.FC<{
+	containerId: number;
+	columns: ColumnData[];
+}> = ({ containerId, columns }) => {
+	return (
 		<div
-			ref={dropRefContainer}
 			style={{
-				backgroundColor: isOverContainer ? 'blue' : 'white',
 				padding: '15px',
 			}}>
 			<div
-				ref={dragRefContainer}
 				style={{
-					...customStyle,
 					padding: '15px',
-					backgroundColor: 'red',
 				}}>
-				<ColumnContainerStyled
-					ref={dropRef}
-					style={{
-						backgroundColor: isOver ? 'blue' : 'white',
-					}}>
+				<ColumnContainerStyled>
 					{columns.map((col, i) => {
 						return (
 							<ColumnContent

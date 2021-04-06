@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ColumnData } from './type';
 import Column from './Column';
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
