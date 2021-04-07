@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { ItemData } from './type';
 
-export type ColumnButtonProps = { name: string };
+export type ColumnButtonProps = { name: string; onClick?: () => void };
 
-const ColumnButtonStyled = styled.div({
+const ColumnButtonStyled = styled.button({
 	padding: '15px',
 	marginBottom: '15px',
 	border: 'dashed 1px #444',
@@ -13,8 +13,12 @@ const ColumnButtonStyled = styled.div({
 	opacity: '0.5',
 });
 
-const ColumnButton: React.FC<ColumnButtonProps> = ({ name }) => {
-	return <ColumnButtonStyled>{name}</ColumnButtonStyled>;
+const ColumnButton: React.FC<ColumnButtonProps> = ({ name, onClick }) => {
+	function handleClick() {
+		onClick?.();
+	}
+
+	return <ColumnButtonStyled onClick={handleClick}>{name}</ColumnButtonStyled>;
 };
 
 export default ColumnButton;

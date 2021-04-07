@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ColumnData } from './type';
+import { ColumnData, ItemData } from './type';
 import Column from './Column';
 import React from 'react';
 import styled from 'styled-components';
@@ -76,6 +76,12 @@ const Board: React.FC = () => {
 		setColumns(next);
 	}
 
+	function handleAddItem(containerId: number, item: ColumnData) {
+		const next = [...columns];
+		next[containerId].push(item);
+		setColumns(next);
+	}
+
 	return (
 		<div>
 			<DndProvider backend={HTML5Backend}>
@@ -87,7 +93,9 @@ const Board: React.FC = () => {
 								dropColumn={handleDropColumnItem}
 								dropColumnContainer={handleDropColumnContainer}
 								key={'column-' + i}
-								columns={column}></Column>
+								columns={column}
+								onAddItem={handleAddItem}
+							/>
 						);
 					})}
 				</BoardContainer>

@@ -1,8 +1,9 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import styled from 'styled-components';
 import { ColumnData } from './type';
 import ColumnHeader from './ColumnHeader';
 import ColumnButton from './ColumnButton';
+import ColumnModal from './ColumnModal';
 import { useDrag, useDragLayer, useDrop } from 'react-dnd';
 
 const ColumnContainerStyled = styled.div.attrs((props: any) => ({
@@ -63,6 +64,7 @@ export type ColumnContainerProps = {
 		destContainerId: number
 	) => void;
 	columns: ColumnData[];
+	onAddItem: (containerId: number, item: ColumnData) => void;
 };
 
 const layerStyles: CSSProperties = {
@@ -152,7 +154,18 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 	dropColumn,
 	dropColumnContainer,
 	columns,
+	onAddItem,
 }) => {
+	const [showItemModal, setShowItemModal] = useState<boolean>(false);
+
+	function handleAddItem() {
+		setShowItemModal(true);
+	}
+
+	function handleCloseItem() {
+		setShowItemModal(false);
+	}
+
 	// drop column item
 	const [{ isOver }, dropRef] = useDrop({
 		accept: 'Column',
@@ -190,41 +203,50 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 	const customStyle = isDraggingContainer ? { opacity: '0' } : {};
 
 	return (
-		<ColumnContainerDragLayer>
-			<div
-				ref={dropRefContainer}
-				style={{
-					backgroundColor: isOverContainer ? 'blue' : 'white',
-					padding: '15px',
-				}}>
+		<div>
+			<ColumnContainerDragLayer>
 				<div
-					ref={dragRefContainer}
+					ref={dropRefContainer}
 					style={{
-						...customStyle,
+						backgroundColor: isOverContainer ? 'blue' : 'white',
 						padding: '15px',
-						backgroundColor: 'red',
-						cursor: 'drag',
-						opacity: isOverContainer ? '0' : '1',
 					}}>
-					<ColumnContainerStyled
-						ref={dropRef}
+					<div
+						ref={dragRefContainer}
 						style={{
-							backgroundColor: isOver ? 'blue' : 'white',
+							...customStyle,
+							padding: '15px',
+							backgroundColor: 'red',
+							cursor: 'drag',
+							opacity: isOverContainer ? '0' : '1',
 						}}>
-						{columns.map((col, i) => {
-							return (
-								<ColumnContent
-									containerId={containerId}
-									column={col}
-									key={i + col.name}
-								/>
-							);
-						})}
-						<ColumnButton name={'Add Item'} />
-					</ColumnContainerStyled>
+						<ColumnContainerStyled
+							ref={dropRef}
+							style={{
+								backgroundColor: isOver ? 'blue' : 'white',
+							}}>
+							{columns.map((col, i) => {
+								return (
+									<ColumnContent
+										containerId={containerId}
+										column={col}
+										key={i + col.name}
+									/>
+								);
+							})}
+							<ColumnButton name={'Add Item'} onClick={handleAddItem} />
+						</ColumnContainerStyled>
+					</div>
 				</div>
-			</div>
-		</ColumnContainerDragLayer>
+			</ColumnContainerDragLayer>
+			{showItemModal && (
+				<ColumnModal
+					showModal={showItemModal}
+					onAddItem={(item) => onAddItem(containerId, item)}
+					onClose={handleCloseItem}
+				/>
+			)}
+		</div>
 	);
 };
 
