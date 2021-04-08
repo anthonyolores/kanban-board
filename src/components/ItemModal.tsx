@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { ColumnData } from './type';
+import { ItemData } from './type';
 
-type ColumnModalProps = {
+type ItemModalProps = {
 	showModal: boolean;
-	onAddColumn: (column: ColumnData) => void;
+	onAddItem: (item: ItemData) => void;
 	onClose: () => void;
 };
-const ColumnModal: React.FC<ColumnModalProps> = ({
+const ItemModal: React.FC<ItemModalProps> = ({
 	showModal,
-	onAddColumn,
+	onAddItem,
 	onClose,
 }) => {
 	const [show, setShow] = useState<boolean>(showModal);
-	const [item, setItem] = useState<ColumnData>({
+	const [item, setItem] = useState<ItemData>({
 		id: Date.now().toString(),
 		name: '',
-		items: [],
+		description: '',
 	});
 
 	useEffect(() => {
@@ -27,8 +27,12 @@ const ColumnModal: React.FC<ColumnModalProps> = ({
 		setItem({ ...item, name: e.target.value.toString() });
 	}
 
+	function handleChangeDesc(e) {
+		setItem({ ...item, description: e.target.value.toString() });
+	}
+
 	function handleSave() {
-		onAddColumn(item);
+		onAddItem(item);
 		onClose();
 	}
 
@@ -40,7 +44,7 @@ const ColumnModal: React.FC<ColumnModalProps> = ({
 		<>
 			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>
-					<Modal.Title>Column</Modal.Title>
+					<Modal.Title>Task Item</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Form>
@@ -48,8 +52,16 @@ const ColumnModal: React.FC<ColumnModalProps> = ({
 							<Form.Label>Name</Form.Label>
 							<Form.Control
 								type='text'
-								placeholder='Enter Column Name'
+								placeholder='Enter Item Name'
 								onChange={handleChangeName}
+							/>
+						</Form.Group>
+						<Form.Group>
+							<Form.Label>Description</Form.Label>
+							<Form.Control
+								type='textarea'
+								placeholder='Enter Item Description'
+								onChange={handleChangeDesc}
 							/>
 						</Form.Group>
 					</Form>
@@ -67,4 +79,4 @@ const ColumnModal: React.FC<ColumnModalProps> = ({
 	);
 };
 
-export default ColumnModal;
+export default ItemModal;

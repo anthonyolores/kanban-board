@@ -1,9 +1,9 @@
 import React, { CSSProperties, useState } from 'react';
 import styled from 'styled-components';
-import { ColumnData } from './type';
-import ColumnHeader from './ColumnHeader';
-import ColumnButton from './ColumnButton';
+import { ColumnData, ItemData } from './type';
 import ColumnModal from './ColumnModal';
+import ColumnButton from './ColumnButton';
+import ItemModal from './ItemModal';
 import { useDrag, useDragLayer, useDrop } from 'react-dnd';
 
 const ColumnContainerStyled = styled.div.attrs((props: any) => ({
@@ -19,20 +19,17 @@ const ColumnContainerStyled = styled.div.attrs((props: any) => ({
 });
 
 export type ColumnContentProps = {
-	column: ColumnData;
+	item: ItemData;
 	containerId: number;
 };
 
-const ColumnContent: React.FC<ColumnContentProps> = ({
-	column,
-	containerId,
-}) => {
+const ColumnContent: React.FC<ColumnContentProps> = ({ item, containerId }) => {
 	const [{ isDragging }, dragRef] = useDrag({
 		type: 'Column',
 		item: {
-			id: column.id,
+			id: item.id,
 			containerId,
-			column,
+			item,
 		},
 		options: { dropEffect: 'move' },
 		collect: (monitor) => {
@@ -46,8 +43,8 @@ const ColumnContent: React.FC<ColumnContentProps> = ({
 
 	return (
 		<div ref={dragRef} style={{ ...customStyle, marginBottom: '15px' }}>
-			<ColumnHeader name={column.name} />
-			<div>{column.description}</div>
+			<div>{item.name}</div>
+			<div>{item.description}</div>
 		</div>
 	);
 };
@@ -63,8 +60,8 @@ export type ColumnContainerProps = {
 		sourceContainerId: number,
 		destContainerId: number
 	) => void;
-	columns: ColumnData[];
-	onAddItem: (containerId: number, item: ColumnData) => void;
+	column: ColumnData;
+	onAddItem: (containerId: number, item: ItemData) => void;
 };
 
 const layerStyles: CSSProperties = {
@@ -121,7 +118,12 @@ const ColumnContainerDragLayer: React.FC = ({ children }) => {
 								initialOffset,
 								currentOffset,
 							})}>
-							{<ThumbnailDrag containerId={item.id} columns={item.columns} />}
+							{
+								<ColumnThumbnailDrag
+									containerId={item.id}
+									column={item.column}
+								/>
+							}
 						</div>
 					</div>
 				) : itemType === 'Column' ? (
@@ -137,7 +139,7 @@ const ColumnContainerDragLayer: React.FC = ({ children }) => {
 							{
 								<ColumnContent
 									containerId={item.containerId}
-									column={item.column}
+									item={item.item}
 								/>
 							}
 						</div>
@@ -153,7 +155,7 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 	containerId,
 	dropColumn,
 	dropColumnContainer,
-	columns,
+	column,
 	onAddItem,
 }) => {
 	const [showItemModal, setShowItemModal] = useState<boolean>(false);
@@ -179,7 +181,7 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 		type: 'ColumnContainer',
 		item: {
 			id: containerId,
-			columns,
+			column,
 		},
 		options: { dropEffect: 'move' },
 		collect: (monitor) => {
@@ -225,12 +227,12 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 							style={{
 								backgroundColor: isOver ? 'blue' : 'white',
 							}}>
-							{columns.map((col, i) => {
+							{column.items.map((item, i) => {
 								return (
 									<ColumnContent
 										containerId={containerId}
-										column={col}
-										key={i + col.name}
+										item={item}
+										key={i + item.name}
 									/>
 								);
 							})}
@@ -240,9 +242,9 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 				</div>
 			</ColumnContainerDragLayer>
 			{showItemModal && (
-				<ColumnModal
+				<ItemModal
 					showModal={showItemModal}
-					onAddItem={(item) => onAddItem(containerId, item)}
+					onAddItem={(item: ItemData) => onAddItem(containerId, item)}
 					onClose={handleCloseItem}
 				/>
 			)}
@@ -250,10 +252,10 @@ const ColumnContainer: React.FC<ColumnContainerProps> = ({
 	);
 };
 
-const ThumbnailDrag: React.FC<{
+const ColumnThumbnailDrag: React.FC<{
 	containerId: number;
-	columns: ColumnData[];
-}> = ({ containerId, columns }) => {
+	column: ColumnData;
+}> = ({ containerId, column }) => {
 	return (
 		<div
 			style={{
@@ -264,12 +266,12 @@ const ThumbnailDrag: React.FC<{
 					padding: '15px',
 				}}>
 				<ColumnContainerStyled>
-					{columns.map((col, i) => {
+					{column.items.map((item, i) => {
 						return (
 							<ColumnContent
 								containerId={containerId}
-								column={col}
-								key={i + col.name}
+								item={item}
+								key={i + item.name}
 							/>
 						);
 					})}

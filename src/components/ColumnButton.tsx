@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ItemData } from './type';
 
 export type ColumnButtonProps = { name: string; onClick?: () => void };
 

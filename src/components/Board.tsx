@@ -5,6 +5,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+import ColumnModal from './ColumnModal';
+import ColumnButton from './ColumnButton';
 
 const BoardContainer = styled.div({
 	display: 'flex',
@@ -16,36 +18,51 @@ const BoardContainer = styled.div({
 });
 
 const Board: React.FC = () => {
-	const [columns, setColumns] = useState<Array<ColumnData[]>>([
-		[
-			{
-				id: '11',
-				name: 'Column 1',
-				description: 'Description Item 1',
-			},
-		],
-		[
-			{
-				id: '22',
-				name: 'Column 2',
-				description: 'Description Item 2',
-			},
-		],
-		[
-			{
-				id: '33',
-				name: 'Column 3',
-				description: 'Description Item 3',
-			},
-		],
+	const [showColumnModal, setShowColumnModal] = useState<boolean>(false);
+	const [columns, setColumns] = useState<Array<ColumnData>>([
+		{
+			id: '0',
+			name: 'Todo',
+			items: [{ id: '00', name: 'Todo name', description: 'Todo description' }],
+		},
+		{
+			id: '01',
+			name: 'Todo',
+			items: [
+				{ id: '010', name: 'Todo name 2', description: 'Todo description 2' },
+			],
+		},
+
+		// [
+		// 	{
+		// 		id: '22',
+		// 		name: 'Column 2',
+		// 		description: 'Description Item 2',
+		// 	},
+		// ],
+		// [
+		// 	{
+		// 		id: '33',
+		// 		name: 'Column 3',
+		// 		description: 'Description Item 3',
+		// 	},
+		// ],
 	]);
+
+	function handleAddColumn(column: ColumnData) {
+		setColumns([...columns, column]);
+	}
+
+	function handleCloseColumn() {
+		setShowColumnModal(false);
+	}
 
 	function handleDropColumnItem(
 		colId: string,
 		sourceContainerId: number,
 		destContainerId: number
 	) {
-		const sourceItemIndex = columns[sourceContainerId].findIndex(
+		const sourceItemIndex = columns[sourceContainerId].items.findIndex(
 			(c) => c.id === colId
 		);
 
@@ -53,12 +70,12 @@ const Board: React.FC = () => {
 			const next = [...columns];
 
 			//add item to destination column
-			next[destContainerId].push(
-				columns[sourceContainerId].find((c) => c.id === colId)
+			next[destContainerId].items.push(
+				columns[sourceContainerId].items.find((c) => c.id === colId)
 			);
 
 			//remove item from source column
-			next[sourceContainerId].splice(sourceItemIndex, 1);
+			next[sourceContainerId].items.splice(sourceItemIndex, 1);
 
 			setColumns(next);
 		}
@@ -76,9 +93,9 @@ const Board: React.FC = () => {
 		setColumns(next);
 	}
 
-	function handleAddItem(containerId: number, item: ColumnData) {
+	function handleAddItem(containerId: number, item: ItemData) {
 		const next = [...columns];
-		next[containerId].push(item);
+		next[containerId].items.push(item);
 		setColumns(next);
 	}
 
@@ -93,11 +110,24 @@ const Board: React.FC = () => {
 								dropColumn={handleDropColumnItem}
 								dropColumnContainer={handleDropColumnContainer}
 								key={'column-' + i}
-								columns={column}
+								column={column}
 								onAddItem={handleAddItem}
 							/>
 						);
 					})}
+					{showColumnModal && (
+						<ColumnModal
+							showModal={showColumnModal}
+							onAddColumn={(column: ColumnData) => handleAddColumn(column)}
+							onClose={handleCloseColumn}
+						/>
+					)}
+					<ColumnButton
+						name={'Add Column'}
+						onClick={() => {
+							setShowColumnModal(true);
+						}}
+					/>
 				</BoardContainer>
 			</DndProvider>
 		</div>
