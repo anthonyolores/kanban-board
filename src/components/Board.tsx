@@ -81,7 +81,7 @@ const Board: React.FC = () => {
 		}
 	}
 
-	function handleDropColumnContainer(
+	function handleDropColumn(
 		sourceContainerId: number,
 		destContainerId: number
 	) {
@@ -107,8 +107,8 @@ const Board: React.FC = () => {
 						return (
 							<Column
 								containerId={i}
-								dropColumn={handleDropColumnItem}
-								dropColumnContainer={handleDropColumnContainer}
+								dropColumnItem={handleDropColumnItem}
+								dropColumn={handleDropColumn}
 								key={'column-' + i}
 								column={column}
 								onAddItem={handleAddItem}
