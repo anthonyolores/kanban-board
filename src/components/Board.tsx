@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { ColumnData, ItemData } from './type';
 import Column from './Column';
 import React from 'react';
@@ -7,6 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import ColumnModal from './ColumnModal';
 import ColumnButton from './ColumnButton';
+import { AppContext } from './BoardContext';
 
 const BoardContainer = styled.div({
 	display: 'flex',
@@ -18,36 +19,8 @@ const BoardContainer = styled.div({
 });
 
 const Board: React.FC = () => {
+	const { columns, setColumns } = useContext(AppContext);
 	const [showColumnModal, setShowColumnModal] = useState<boolean>(false);
-	const [columns, setColumns] = useState<Array<ColumnData>>([
-		{
-			id: '0',
-			name: 'Todo',
-			items: [{ id: '00', name: 'Todo name', description: 'Todo description' }],
-		},
-		{
-			id: '01',
-			name: 'Todo',
-			items: [
-				{ id: '010', name: 'Todo name 2', description: 'Todo description 2' },
-			],
-		},
-
-		// [
-		// 	{
-		// 		id: '22',
-		// 		name: 'Column 2',
-		// 		description: 'Description Item 2',
-		// 	},
-		// ],
-		// [
-		// 	{
-		// 		id: '33',
-		// 		name: 'Column 3',
-		// 		description: 'Description Item 3',
-		// 	},
-		// ],
-	]);
 
 	function handleAddColumn(column: ColumnData) {
 		setColumns([...columns, column]);

@@ -4,6 +4,7 @@ import { ColumnData, ItemData } from './type';
 import ColumnModal from './ColumnModal';
 import ColumnButton from './ColumnButton';
 import ItemModal from './ItemModal';
+import ColumnHeader from './ColumnHeader';
 import { useDrag, useDragLayer, useDrop } from 'react-dnd';
 
 const ColumnContainerStyled = styled.div<{
@@ -230,6 +231,7 @@ const Column: React.FC<ColumnContainerProps> = ({
 						// set background of destination column
 						isDropping={isOverColumn && draggedItem.id !== containerId}
 						ref={dragRefContainer}>
+						<ColumnHeader name={column.name} />
 						<ColumnContainerStyled
 							isDropping={isOverColumnItem}
 							ref={dropRef}
@@ -267,6 +269,7 @@ const ColumnDragLayer: React.FC<{
 			style={{
 				padding: '15px',
 			}}>
+			<ColumnHeader name={column.name} />
 			<ColumnContainerStyled>
 				{column.items.map((item, i) => {
 					return (

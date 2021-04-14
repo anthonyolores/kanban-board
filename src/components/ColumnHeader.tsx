@@ -5,7 +5,6 @@ export type ColumnHeaderProps = { name: string };
 
 const ColumnItemStyled = styled.div({
 	padding: '15px',
-	marginBottom: '15px',
 	fontSize: '1.5em',
 	fontWeight: 'bold',
 });
