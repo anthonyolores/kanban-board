@@ -5,6 +5,8 @@ import { ColumnData } from './type';
 type BoardContextStore = {
 	columns: Array<ColumnData>;
 	setColumns: (columns: Array<ColumnData>) => void;
+	hideEditor: boolean;
+	setHideEditor: (hideEditor: boolean) => void;
 };
 export const AppContext = React.createContext<BoardContextStore | undefined>(
 	undefined
@@ -25,9 +27,11 @@ const BoardContext: React.FC = ({ children }) => {
 			],
 		},
 	]);
+	const [hideEditor, setHideEditor] = useState<boolean>(true);
 
 	return (
-		<AppContext.Provider value={{ columns, setColumns }}>
+		<AppContext.Provider
+			value={{ columns, setColumns, hideEditor, setHideEditor }}>
 			{children}
 		</AppContext.Provider>
 	);

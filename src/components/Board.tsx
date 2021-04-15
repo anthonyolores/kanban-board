@@ -69,7 +69,7 @@ const Board: React.FC = () => {
 	function handleAddItem(containerId: number, item: ItemData) {
 		const next = [...columns];
 		next[containerId].items.push(item);
-		setColumns(next);
+		setColumns([...next]);
 	}
 
 	return (
