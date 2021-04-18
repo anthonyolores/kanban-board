@@ -17,10 +17,10 @@ const JSONEditor: React.FC = () => {
 			placeholder={JSON.parse(JSON.stringify(columns))}
 			locale={locale}
 			onChange={handleJSONChange}
-			width='600px'
+			width='550px'
 			height='100vh'
 			style={{ body: { fontSize: '1.1em' } }}
-			reset={true}
+			colors={{ background: '#111A23' }}
 		/>
 	);
 };

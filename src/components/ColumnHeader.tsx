@@ -7,6 +7,7 @@ const ColumnItemStyled = styled.div({
 	padding: '15px',
 	fontSize: '1.5em',
 	fontWeight: 'bold',
+	color: '#c4c7ca',
 });
 
 const ColumnHeader: React.FC<ColumnHeaderProps> = ({ name }) => {

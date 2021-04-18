@@ -4,46 +4,80 @@ import Board from './Board';
 import BoardContext, { AppContext } from './BoardContext';
 import JSONEditor from './JSONEditor';
 import styled from 'styled-components';
+import ColumnModal from './ColumnModal';
+import { ColumnData } from './type';
 
 const Row = styled.div({
 	display: 'flex',
 	flexDirection: 'row',
-	flexWrap: 'wrap',
+	flexWrap: 'nowrap',
 	width: '100%',
 });
 
-const JSONEditorContainerStyled = styled.div({ height: '100vh' });
-
-const BoardContainerStyled = styled.div({
-	flexGrow: 1,
+const JSONEditorContainerStyled = styled.div({
+	height: '100vh',
 });
 
-const HideButton = styled.button({
+const BoardContainerStyled = styled.div<{ editorWidth: number }>((s) => {
+	return {
+		width: `calc(100% - ${s.editorWidth}px)`,
+	};
+});
+
+const ActionButton = styled.button({
 	position: 'relative',
-	fontSize: '1.8em',
+	fontSize: '1.2em',
 	zIndex: 1,
-	top: '90%',
-	transformY: 'translate(-90%)',
-	left: '-33px',
-	padding: '10px',
-	borderRadius: '100%',
+	margin: '1px',
+	top: '0',
+	padding: '15px',
 	border: 'none',
-	background: '#095461',
-	color: '#17a2b8',
+	background: '#556779',
+	color: '#c4c7ca',
 	'&:hover': {
-		background: '#117a8b',
+		background: '#2A4158',
 	},
 	'&:active': {
-		background: '#095461',
+		background: '#556779',
 	},
 });
 
 const BoardContainer: React.FC = () => {
-	const { hideEditor, setHideEditor } = React.useContext(AppContext);
+	const {
+		hideEditor,
+		setHideEditor,
+		showColumnModal,
+		setShowColumnModal,
+		columns,
+		setColumns,
+	} = React.useContext(AppContext);
+
+	function handleAddColumn(column: ColumnData) {
+		setColumns([...columns, column]);
+	}
+
+	function handleCloseColumn() {
+		setShowColumnModal(false);
+	}
 	return (
-		<BoardContainerStyled>
-			{/* <HideButton onClick={() => setHideEditor(!hideEditor)}>{'<>'}</HideButton> */}
+		<BoardContainerStyled editorWidth={hideEditor ? 0 : 500}>
+			<ActionButton onClick={() => setHideEditor(!hideEditor)}>
+				{'<> Editor'}
+			</ActionButton>
+			<ActionButton
+				onClick={() => {
+					setShowColumnModal(true);
+				}}>
+				+ Add Column
+			</ActionButton>
 			<Board />
+			{showColumnModal && (
+				<ColumnModal
+					showModal={showColumnModal}
+					onAddColumn={(column: ColumnData) => handleAddColumn(column)}
+					onClose={handleCloseColumn}
+				/>
+			)}
 		</BoardContainerStyled>
 	);
 };
@@ -51,7 +85,7 @@ const BoardContainer: React.FC = () => {
 const JSONEditorContainer: React.FC = () => {
 	const { hideEditor } = React.useContext(AppContext);
 
-	if (hideEditor)
+	if (!hideEditor)
 		return (
 			<JSONEditorContainerStyled>
 				<JSONEditor />
@@ -61,9 +95,27 @@ const JSONEditorContainer: React.FC = () => {
 	return null;
 };
 
+const HeaderRow = styled.div({
+	height: '100px',
+	display: 'flex',
+	alignItems: 'center',
+	padding: '10px',
+	backgroundColor: '#fff',
+	' .header': {
+		justifyContent: '50%',
+		paddingLeft: '20px',
+		fontSize: '1.5rem',
+		fontWeight: 'bold',
+		color: '#2A4158',
+	},
+});
+
 const App: React.FC = () => {
 	return (
 		<BoardContext>
+			<HeaderRow>
+				<div className='header'>Kanban Board</div>
+			</HeaderRow>
 			<Row>
 				<JSONEditorContainer />
 				<BoardContainer />

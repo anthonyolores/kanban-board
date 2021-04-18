@@ -15,9 +15,7 @@ const ColumnContainerStyled = styled.div<{
 	flexDirection: 'column',
 	width: '300px',
 	flex: '0 0 auto',
-	backgroundColor: p.isDropping ? 'blue' : '#fff',
 	opacity: p.isDragging ? '0.2' : '1',
-	margin: '15px',
 	padding: '25px',
 }));
 
@@ -28,14 +26,14 @@ const ColumnDraggable = styled.div<{
 	return {
 		padding: '15px',
 		cursor: 'move',
-		border: '1px solid #eee',
-		background: p.isDragging ? 'red' : 'red',
-		backgroundColor: p.isDropping ? 'blue' : 'red',
+		marginLeft: '20px',
+		overflow: 'hidden',
+		backgroundColor: p.isDropping ? '#0d1823' : '#111A23',
 	};
 });
 
 const ColumnDroppableArea = styled.div<{ isDropping?: boolean }>((p) => ({
-	background: p.isDropping ? 'red !important' : 'white',
+	// background: p.isDropping ? 'red !important' : 'white',
 }));
 
 export type ColumnContentProps = {
@@ -63,8 +61,17 @@ const ColumnContent: React.FC<ColumnContentProps> = ({ item, containerId }) => {
 	const customStyle = isDragging ? { opacity: '0.2' } : {};
 
 	return (
-		<div ref={dragRef} style={{ ...customStyle, marginBottom: '15px' }}>
-			<div>{item.name}</div>
+		<div
+			ref={dragRef}
+			style={{
+				...customStyle,
+				padding: '15px',
+				marginBottom: '15px',
+				color: '#c4c7ca',
+				opacity: '0.9',
+				backgroundColor: 'rgb(32 47 62)',
+			}}>
+			<div style={{ fontWeight: 'bold' }}>{item.name}</div>
 			<div>{item.description}</div>
 		</div>
 	);
@@ -88,7 +95,6 @@ const layerStyles: CSSProperties = {
 	zIndex: 100,
 	left: 0,
 	top: 0,
-	width: '100%',
 	height: '100%',
 };
 
@@ -222,10 +228,7 @@ const Column: React.FC<ColumnContainerProps> = ({
 	return (
 		<>
 			<DragLayer>
-				<ColumnDroppableArea
-					isDropping={isOverColumn}
-					ref={dropRefContainer}
-					style={{ height: 500 }}>
+				<ColumnDroppableArea isDropping={isOverColumn} ref={dropRefContainer}>
 					<ColumnDraggable
 						isDragging={isDraggingColumn}
 						// set background of destination column
@@ -245,7 +248,7 @@ const Column: React.FC<ColumnContainerProps> = ({
 									/>
 								);
 							})}
-							<ColumnButton name='Add Item' onClick={handleAddItem} />
+							<ColumnButton name='+ Item' onClick={handleAddItem} />
 						</ColumnContainerStyled>
 					</ColumnDraggable>
 				</ColumnDroppableArea>

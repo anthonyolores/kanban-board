@@ -1,1 +1,36 @@
 @import '~bootstrap/scss/bootstrap';
+
+body {
+	background: #2a4158;
+	overflow: hidden;
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #111a23;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #556779;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #556779;
+}
+
+button,
+input {
+	border-radius: 0px !important;
+}
+
+button.btn-primary {
+	background-color: #111a23;
+	border: none;
+}

@@ -14,21 +14,11 @@ const BoardContainer = styled.div({
 	flexDirection: 'row',
 	overflowX: 'auto',
 	width: '100%',
-	padding: '25px',
-	backgroundColor: '#eee',
+	padding: '50px',
 });
 
 const Board: React.FC = () => {
 	const { columns, setColumns } = useContext(AppContext);
-	const [showColumnModal, setShowColumnModal] = useState<boolean>(false);
-
-	function handleAddColumn(column: ColumnData) {
-		setColumns([...columns, column]);
-	}
-
-	function handleCloseColumn() {
-		setShowColumnModal(false);
-	}
 
 	function handleDropColumnItem(
 		colId: string,
@@ -88,19 +78,6 @@ const Board: React.FC = () => {
 							/>
 						);
 					})}
-					{showColumnModal && (
-						<ColumnModal
-							showModal={showColumnModal}
-							onAddColumn={(column: ColumnData) => handleAddColumn(column)}
-							onClose={handleCloseColumn}
-						/>
-					)}
-					<ColumnButton
-						name={'Add Column'}
-						onClick={() => {
-							setShowColumnModal(true);
-						}}
-					/>
 				</BoardContainer>
 			</DndProvider>
 		</div>

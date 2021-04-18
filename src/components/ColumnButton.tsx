@@ -5,11 +5,17 @@ export type ColumnButtonProps = { name: string; onClick?: () => void };
 
 const ColumnButtonStyled = styled.button({
 	padding: '15px',
-	marginBottom: '15px',
-	border: 'dashed 1px #444',
-	backgroundColor: '#efefef',
+	color: '#c4c7ca',
+	backgroundColor: '#111a23',
+	marginTop: '15px',
 	fontWeight: 'bolder',
-	opacity: '0.5',
+	border: '1px solid #2a4158',
+	'&:hover': {
+		backgroundColor: '#2A4158',
+	},
+	'&:active': {
+		backgroundColor: '#2a4158',
+	},
 });
 
 const ColumnButton: React.FC<ColumnButtonProps> = ({ name, onClick }) => {

@@ -7,6 +7,8 @@ type BoardContextStore = {
 	setColumns: (columns: Array<ColumnData>) => void;
 	hideEditor: boolean;
 	setHideEditor: (hideEditor: boolean) => void;
+	showColumnModal: boolean;
+	setShowColumnModal: (showColumnModal: boolean) => void;
 };
 export const AppContext = React.createContext<BoardContextStore | undefined>(
 	undefined
@@ -27,11 +29,19 @@ const BoardContext: React.FC = ({ children }) => {
 			],
 		},
 	]);
-	const [hideEditor, setHideEditor] = useState<boolean>(true);
+	const [hideEditor, setHideEditor] = useState<boolean>(false);
+	const [showColumnModal, setShowColumnModal] = useState<boolean>(false);
 
 	return (
 		<AppContext.Provider
-			value={{ columns, setColumns, hideEditor, setHideEditor }}>
+			value={{
+				columns,
+				setColumns,
+				hideEditor,
+				setHideEditor,
+				showColumnModal,
+				setShowColumnModal,
+			}}>
 			{children}
 		</AppContext.Provider>
 	);
