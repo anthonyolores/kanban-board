@@ -12,7 +12,8 @@
       "esModuleInterop": true
     },
     "include": [
-      "src/components/index.tsx"
+      "src/components/index.tsx",
+      "index.d.ts"
     ]
   }
   

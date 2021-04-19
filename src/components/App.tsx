@@ -6,6 +6,7 @@ import JSONEditor from './JSONEditor';
 import styled from 'styled-components';
 import ColumnModal from './ColumnModal';
 import { ColumnData } from './type';
+import logo from './../assets/logo.svg';
 
 const Row = styled.div({
 	display: 'flex',
@@ -62,7 +63,7 @@ const BoardContainer: React.FC = () => {
 	return (
 		<BoardContainerStyled editorWidth={hideEditor ? 0 : 500}>
 			<ActionButton onClick={() => setHideEditor(!hideEditor)}>
-				{'<> Editor'}
+				{'</> Editor'}
 			</ActionButton>
 			<ActionButton
 				onClick={() => {
@@ -96,7 +97,7 @@ const JSONEditorContainer: React.FC = () => {
 };
 
 const HeaderRow = styled.div({
-	height: '100px',
+	height: '80px',
 	display: 'flex',
 	alignItems: 'center',
 	padding: '10px',
@@ -114,7 +115,10 @@ const App: React.FC = () => {
 	return (
 		<BoardContext>
 			<HeaderRow>
-				<div className='header'>Kanban Board</div>
+				<div className='header'>
+					<img src={logo} alt='React Logo' height='60' />
+					&nbsp;Kanban Board
+				</div>
 			</HeaderRow>
 			<Row>
 				<JSONEditorContainer />

@@ -32,7 +32,7 @@ const ItemModal: React.FC<ItemModalProps> = ({
 	}
 
 	function handleSave() {
-		onAddItem(item);
+		if (item.name) onAddItem(item);
 		onClose();
 	}
 

@@ -1,12 +1,10 @@
-import { useContext, useState } from 'react';
-import { ColumnData, ItemData } from './type';
+import { useContext } from 'react';
+import { ItemData } from './type';
 import Column from './Column';
 import React from 'react';
 import styled from 'styled-components';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
-import ColumnModal from './ColumnModal';
-import ColumnButton from './ColumnButton';
 import { AppContext } from './BoardContext';
 
 const BoardContainer = styled.div({

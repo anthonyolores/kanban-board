@@ -28,7 +28,7 @@ const ColumnModal: React.FC<ColumnModalProps> = ({
 	}
 
 	function handleSave() {
-		onAddColumn(item);
+		if (item.name) onAddColumn(item);
 		onClose();
 	}
 
